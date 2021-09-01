@@ -7,12 +7,14 @@
 #define TEST_CALLING_UPDATE     "Calling test update"
 #define TEST_CALLING_COLLISION  "Calling test collision"
 #define TEST_CALLING_DRAW       "Calling test draw"
+#define TEST_CALLING_DESTROY    "Calling test destroy"
 
 static bool test_init(void *object);
 static bool test_input(void *object);
 static bool test_update(void *object);
 static bool test_collision(void *object);
 static bool test_draw(void *object);
+static bool test_destroy(void *object);
 
 int main()
 {
@@ -23,13 +25,14 @@ int main()
         .input = test_input,
         .collision = test_collision,
         .update = test_update,
-        .draw = test_draw
+        .draw = test_draw,
+        .destroy = test_destroy
     };
 
     if( game_loop(&test_game, NULL) == true)
         status = true;
 
-    return status == false ? EXIT_SUCCESS : EXIT_FAILURE;
+    return status ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
@@ -61,4 +64,10 @@ static bool test_draw(void *object)
 {
     printf("%s\n", TEST_CALLING_DRAW);
     return false;
+}
+
+static bool test_destroy(void *object)
+{
+    printf("%s\n", TEST_CALLING_DESTROY);
+    return true;
 }

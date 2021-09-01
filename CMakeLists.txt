@@ -48,6 +48,9 @@ target_include_directories(game
 add_test_unit(interface test_interface tests/test_interface.c)
 target_link_libraries(test_interface PUBLIC game)
 
+add_test_unit(test_sdl test_sdl2 tests/test_sdl2.c)
+target_link_libraries(test_sdl2 PUBLIC game SDL2)
+
 #------------------------------------------------------------------------------------------------------
 # Install
 #------------------------------------------------------------------------------------------------------

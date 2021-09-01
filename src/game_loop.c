@@ -29,6 +29,8 @@ bool game_loop(game_base_t *game, void *object)
             if(game->draw(object) == false)
                 break;
         }
+
+        state = game->destroy(object);
     }
 
     return state;

@@ -10,6 +10,7 @@ typedef struct
     bool (*update)(void *object);
     bool (*collision)(void *object);
     bool (*draw)(void *object);    
+    bool (*destroy)(void *object); 
 } game_base_t;
 
 
