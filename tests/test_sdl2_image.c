@@ -26,6 +26,8 @@ static bool test_destroy(void *object);
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture *texture = NULL;
+SDL_Rect src_rect;
+SDL_Rect dest_rect;
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +55,8 @@ static bool test_init(void *object)
     int image_type = IMG_INIT_PNG;
     int image_ret;
     SDL_Surface *surface = NULL;
+    // SDL_Rect src_rect;
+    // SDL_Rect dest_rect;
 
 
     do 
@@ -90,6 +94,13 @@ static bool test_init(void *object)
 
         SDL_FreeSurface(surface);
 
+        SDL_QueryTexture(texture, NULL, NULL, &src_rect.w, &src_rect.h);
+
+        dest_rect.x = src_rect.x = 0;
+        dest_rect.y = src_rect.y = 0;
+        dest_rect.w = src_rect.w;
+        dest_rect.h = src_rect.h;
+
     } while(false);
 
 
@@ -118,7 +129,7 @@ static bool test_draw(void *object)
 {
     SDL_RenderClear(renderer);
 
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderCopy(renderer, texture, &src_rect, &dest_rect);
 
     SDL_RenderPresent(renderer);
 
