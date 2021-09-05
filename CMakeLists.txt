@@ -32,7 +32,7 @@ endfunction()
 
 enable_testing()
 
-# ipc library
+# game library
 add_library(game "")
 target_sources(game 
   PUBLIC 
@@ -42,6 +42,18 @@ target_include_directories(game
   PUBLIC 
   ${CMAKE_CURRENT_LIST_DIR}/include
   )
+
+add_executable(spaceship "")
+target_link_libraries(spaceship PUBLIC game SDL2 SDL2_image)
+target_sources(spaceship 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/src/spaceship/spaceship.c
+  )
+target_include_directories(spaceship 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/include
+  )
+
 #------------------------------------------------------------------------------------------------------
 # Tests
 #------------------------------------------------------------------------------------------------------
