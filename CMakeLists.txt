@@ -57,6 +57,8 @@ target_link_libraries(test_sdl2_image PUBLIC game SDL2 SDL2_image)
 add_test_unit(test_animation test_sdl2_animation tests/test_sdl2_animation.c)
 target_link_libraries(test_sdl2_animation PUBLIC game SDL2 SDL2_image)
 
+add_test_unit(test_events test_sdl2_events tests/test_sdl2_events.c)
+target_link_libraries(test_sdl2_events PUBLIC game SDL2 SDL2_image)
 
 
 #------------------------------------------------------------------------------------------------------
