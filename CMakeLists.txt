@@ -43,6 +43,7 @@ target_include_directories(game
   ${CMAKE_CURRENT_LIST_DIR}/include
   )
 
+# spaceship
 add_executable(spaceship "")
 target_link_libraries(spaceship PUBLIC game SDL2 SDL2_image)
 target_sources(spaceship 
@@ -50,6 +51,17 @@ target_sources(spaceship
   ${CMAKE_CURRENT_LIST_DIR}/src/spaceship/spaceship.c
   )
 target_include_directories(spaceship 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/include
+  )
+
+add_executable(breakoutless "")
+target_link_libraries(breakoutless PUBLIC game SDL2 SDL2_image)
+target_sources(breakoutless 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/src/breakoutless/breakoutless.c
+  )
+target_include_directories(breakoutless 
   PUBLIC 
   ${CMAKE_CURRENT_LIST_DIR}/include
   )
