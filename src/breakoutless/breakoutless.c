@@ -44,12 +44,15 @@ typedef struct
     breakoutless_object_t ball;    
     bool running;
     bool start;
+    bool game_over;
     int last_frame_time;
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture_logo;
     SDL_Texture *texture_label;
     TTF_Font *font;
+    TTF_Font *points_font;
+    int points;
 } breakoutless_t;
 
 static bool breakoutless_init(void *object);
@@ -112,10 +115,12 @@ int main()
         },
 
         .start = false,
+        .game_over = false,
         .running = true,
         .last_frame_time = 0,
         .window = NULL,
-        .renderer = NULL
+        .renderer = NULL,
+        .points = 0
     };
 
     if( game_loop(&test_game, &breakoutless) == true)
@@ -171,7 +176,6 @@ static bool breakoutless_init(void *object)
         fprintf(stderr, "Error to create image surface.\n");
         return false;
     }
-        
 
     breakoutless->texture_logo = SDL_CreateTextureFromSurface(breakoutless->renderer, surface);
     if (breakoutless->texture_logo == NULL)
@@ -187,6 +191,13 @@ static bool breakoutless_init(void *object)
     }
 
     breakoutless->font = TTF_OpenFont(BREAKOUTLESS_FONT_PATH, 48);
+    if (breakoutless->font == NULL)
+    {
+        fprintf(stderr, "Error to open font.\n");
+        return false;
+    }
+
+    breakoutless->points_font = TTF_OpenFont(BREAKOUTLESS_FONT_PATH, 18);
     if (breakoutless->font == NULL)
     {
         fprintf(stderr, "Error to open font.\n");
@@ -252,6 +263,7 @@ static bool breakoutless_update(void *object)
     breakoutless->ball.coord.y += breakoutless->ball.speed.vy * delta_time;
     breakoutless->paddle.coord.x += breakoutless->paddle.speed.vx * delta_time;
     breakoutless->paddle.coord.y += breakoutless->paddle.speed.vy * delta_time;
+    breakoutless->points++;
     return true;
 }
 
@@ -314,12 +326,27 @@ static bool breakoutless_draw(void *object)
         };
 
         SDL_SetRenderDrawColor(breakoutless->renderer, 255, 255, 255, 255);
-        SDL_RenderFillRect(breakoutless->renderer, &paddle_rect);        
+        SDL_RenderFillRect(breakoutless->renderer, &paddle_rect); 
+
+        //draw points
+        char text[120] = "";
+        // int points = 200;
+        snprintf(text, 120, "Points: %d", breakoutless->points++);
+        SDL_Color white = {255, 255, 255, 255};        
+        SDL_Surface *font = TTF_RenderText_Blended(breakoutless->points_font, text, white);
+        SDL_Rect font_rect = {WINDOW_WIDTH /2 -(font->w / 2), WINDOW_HEIGHT - 18, font->w, font->h};
+        breakoutless->texture_label = SDL_CreateTextureFromSurface(breakoutless->renderer, font);
+
+        SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_label, NULL, &font_rect);
+        SDL_FreeSurface(font);
+
     }
     else
     {
         //draw logo
-        SDL_Rect src_rect;
+        if(!breakoutless->game_over)
+        {
+            SDL_Rect src_rect;
         SDL_Rect dest_rect;
         SDL_QueryTexture(breakoutless->texture_logo, NULL, NULL, &src_rect.w, &src_rect.h);
 
@@ -333,13 +360,23 @@ static bool breakoutless_draw(void *object)
         SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_logo, &src_rect, &dest_rect);
 
         // draw Press start
+        // char text[120] = "";
+        // int points = 200;
+        // snprintf(text, 120, "Points: %d", points);
         SDL_Color white = {255, 255, 255, 255};        
         SDL_Surface *font = TTF_RenderText_Blended(breakoutless->font, "Press Start", white);
         SDL_Rect font_rect = {WINDOW_WIDTH /2 -(font->w / 2), dest_rect.y + 200, font->w, font->h};
         breakoutless->texture_label = SDL_CreateTextureFromSurface(breakoutless->renderer, font);
 
         SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_label, NULL, &font_rect);
-        SDL_FreeSurface(font);        
+        SDL_FreeSurface(font); 
+        }
+        else 
+        {
+            //game over
+        }
+
+               
     }
 
     SDL_RenderPresent(breakoutless->renderer);
