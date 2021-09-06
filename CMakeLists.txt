@@ -56,7 +56,7 @@ target_include_directories(spaceship
   )
 
 add_executable(breakoutless "")
-target_link_libraries(breakoutless PUBLIC game SDL2 SDL2_image)
+target_link_libraries(breakoutless PUBLIC game SDL2 SDL2_image SDL2_ttf)
 target_sources(breakoutless 
   PUBLIC 
   ${CMAKE_CURRENT_LIST_DIR}/src/breakoutless/breakoutless.c

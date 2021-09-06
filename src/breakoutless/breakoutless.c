@@ -1,12 +1,14 @@
 #include <game_interface.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
 #define BREAKOUTLESS_LOGO_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/breakoutless_logo.png"
+#define BREAKOUTLESS_FONT_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/fonts/font.ttf"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
@@ -46,6 +48,8 @@ typedef struct
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture_logo;
+    SDL_Texture *texture_label;
+    TTF_Font *font;
 } breakoutless_t;
 
 static bool breakoutless_init(void *object);
@@ -173,6 +177,19 @@ static bool breakoutless_init(void *object)
     if (breakoutless->texture_logo == NULL)
     {
         fprintf(stderr, "Error to create texture from surface.\n");
+        return false;
+    }
+
+    if(TTF_Init() == -1)
+    {
+        fprintf(stderr, "Error to initialize fonts.\n");
+        return false;
+    }
+
+    breakoutless->font = TTF_OpenFont(BREAKOUTLESS_FONT_PATH, 48);
+    if (breakoutless->font == NULL)
+    {
+        fprintf(stderr, "Error to open font.\n");
         return false;
     }
 
@@ -314,6 +331,15 @@ static bool breakoutless_draw(void *object)
         dest_rect.h = src_rect.h;
 
         SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_logo, &src_rect, &dest_rect);
+
+        // draw Press start
+        SDL_Color white = {255, 255, 255, 255};        
+        SDL_Surface *font = TTF_RenderText_Blended(breakoutless->font, "Press Start", white);
+        SDL_Rect font_rect = {WINDOW_WIDTH /2 -(font->w / 2), dest_rect.y + 200, font->w, font->h};
+        breakoutless->texture_label = SDL_CreateTextureFromSurface(breakoutless->renderer, font);
+
+        SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_label, NULL, &font_rect);
+        SDL_FreeSurface(font);        
     }
 
     SDL_RenderPresent(breakoutless->renderer);
@@ -325,8 +351,14 @@ static bool breakoutless_destroy(void *object)
 {
     breakoutless_t * breakoutless = (breakoutless_t *)object;
 
+    if(breakoutless->texture_label != NULL)
+        SDL_DestroyTexture(breakoutless->texture_label);
+    TTF_CloseFont(breakoutless->font);
+
     SDL_DestroyRenderer(breakoutless->renderer);
     SDL_DestroyWindow(breakoutless->window);
+
+    TTF_Quit();
     SDL_Quit();
 
     return true;
