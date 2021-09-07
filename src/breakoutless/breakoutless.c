@@ -292,36 +292,38 @@ static bool breakoutless_update(void *object)
 
     if (breakoutless->start && breakoutless->game_over == false)
     {
-        printf("update.\n");    
+        printf("update.\n"); 
+        breakoutless_object_t *ball = &breakoutless->ball;   
+        breakoutless_object_t *paddle = &breakoutless->paddle;
 
         switch (breakoutless->points)
         {
         case 2000:
-            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
-            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            ball->speed.vx = ball->speed.vx * 1.2;
+            ball->speed.vy = ball->speed.vy * 1.2;
             break;
 
         case 5000:
-            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
-            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            ball->speed.vx = ball->speed.vx * 1.2;
+            ball->speed.vy = ball->speed.vy * 1.2;
             break;
 
         case 7000:
-            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
-            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            ball->speed.vx = ball->speed.vx * 1.2;
+            ball->speed.vy = ball->speed.vy * 1.2;
             break;
         
         case 10000:
-            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
-            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            ball->speed.vx = ball->speed.vx * 1.2;
+            ball->speed.vy = ball->speed.vy * 1.2;
             break;       
         }
 
         // update ball and paddle position
-        breakoutless->ball.coord.x += breakoutless->ball.speed.vx * delta_time;
-        breakoutless->ball.coord.y += breakoutless->ball.speed.vy * delta_time;
-        breakoutless->paddle.coord.x += breakoutless->paddle.speed.vx * delta_time;
-        breakoutless->paddle.coord.y += breakoutless->paddle.speed.vy * delta_time;
+        ball->coord.x += ball->speed.vx * delta_time;
+        ball->coord.y += ball->speed.vy * delta_time;
+        paddle->coord.x += paddle->speed.vx * delta_time;
+        paddle->coord.y += paddle->speed.vy * delta_time;
         breakoutless->points++;
     }
 
@@ -330,34 +332,37 @@ static bool breakoutless_update(void *object)
 
 static bool breakoutless_collision(void *object)
 {
-    breakoutless_t * breakoutless = (breakoutless_t *)object;
+    breakoutless_t *breakoutless = (breakoutless_t *)object;
     if(breakoutless->start && breakoutless->game_over == false)
     {
+        breakoutless_object_t *ball = &breakoutless->ball;   
+        breakoutless_object_t *paddle = &breakoutless->paddle;
+
         printf("Collision.\n");
-        if (breakoutless->ball.coord.x <= 0 || breakoutless->ball.coord.x + breakoutless->ball.dimension.width >= WINDOW_WIDTH)
-            breakoutless->ball.speed.vx = -breakoutless->ball.speed.vx;
-        if (breakoutless->ball.coord.y < 0)
-            breakoutless->ball.speed.vy = -breakoutless->ball.speed.vy;
+        if (ball->coord.x <= 0 || ball->coord.x + ball->dimension.width >= WINDOW_WIDTH)
+            ball->speed.vx = -ball->speed.vx;
+        if (ball->coord.y < 0)
+            ball->speed.vy = -ball->speed.vy;
 
         // Check for ball collision with the paddle
-        if (breakoutless->ball.coord.y + breakoutless->ball.dimension.height >= breakoutless->paddle.coord.y &&
-            breakoutless->ball.coord.x + breakoutless->ball.dimension.width >= breakoutless->paddle.coord.x &&
-            breakoutless->ball.coord.x <= breakoutless->paddle.coord.x + breakoutless->paddle.dimension.width)
-            breakoutless->ball.speed.vy = -breakoutless->ball.speed.vy;
+        if (ball->coord.y + ball->dimension.height >= paddle->coord.y &&
+            ball->coord.x + ball->dimension.width >= paddle->coord.x &&
+            ball->coord.x <= paddle->coord.x + paddle->dimension.width)
+            ball->speed.vy = -ball->speed.vy;
 
         // Prevent paddle from moving outside the boundaries of the window
-        if (breakoutless->paddle.coord.x <= 0)
-            breakoutless->paddle.coord.x = 0;
-        if (breakoutless->paddle.coord.x >= WINDOW_WIDTH - breakoutless->paddle.dimension.width)
-            breakoutless->paddle.coord.x = WINDOW_WIDTH - breakoutless->paddle.dimension.width;
+        if (paddle->coord.x <= 0)
+            paddle->coord.x = 0;
+        if (paddle->coord.x >= WINDOW_WIDTH - paddle->dimension.width)
+            paddle->coord.x = WINDOW_WIDTH - paddle->dimension.width;
 
         // Check for game over
-        if (breakoutless->ball.coord.y + breakoutless->ball.dimension.height > WINDOW_HEIGHT)
+        if (ball->coord.y + ball->dimension.height > WINDOW_HEIGHT)
         {
             breakoutless->game_over = true;
             breakoutless->start = false;
-            breakoutless->ball.coord.x = breakoutless->ball.coord.y = 0;
-            breakoutless->ball.speed.vx = breakoutless->ball.speed.vy = BREAKOUTLESS_BALL_SPEED;
+            ball->coord.x = ball->coord.y = 0;
+            ball->speed.vx = ball->speed.vy = BREAKOUTLESS_BALL_SPEED;
         }
     }
     return true;
@@ -373,13 +378,16 @@ static bool breakoutless_draw(void *object)
     if (breakoutless->start && breakoutless->game_over == false)
     {
         printf("Draw Game.\n");
+        breakoutless_object_t *ball = &breakoutless->ball;   
+        breakoutless_object_t *paddle = &breakoutless->paddle;
+
         // Draw a rectangle for the ball object
         SDL_Rect ball_rect =
         {
-            (int)breakoutless->ball.coord.x,
-            (int)breakoutless->ball.coord.y,
-            (int)breakoutless->ball.dimension.width,
-            (int)breakoutless->ball.dimension.height
+            (int)ball->coord.x,
+            (int)ball->coord.y,
+            (int)ball->dimension.width,
+            (int)ball->dimension.height
         };
         SDL_SetRenderDrawColor(breakoutless->renderer, 255, 255, 255, 255);
         SDL_RenderFillRect(breakoutless->renderer, &ball_rect);
@@ -387,10 +395,10 @@ static bool breakoutless_draw(void *object)
         // Draw a rectangle for the paddle object
         SDL_Rect paddle_rect =
         {
-            (int)breakoutless->paddle.coord.x,
-            (int)breakoutless->paddle.coord.y,
-            (int)breakoutless->paddle.dimension.width,
-            (int)breakoutless->paddle.dimension.height
+            (int)paddle->coord.x,
+            (int)paddle->coord.y,
+            (int)paddle->dimension.width,
+            (int)paddle->dimension.height
         };
 
         SDL_SetRenderDrawColor(breakoutless->renderer, 255, 255, 255, 255);
