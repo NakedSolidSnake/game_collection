@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 
 #define WINDOW_WIDTH 800
@@ -10,6 +11,9 @@
 #define BREAKOUTLESS_LOGO_PATH           "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/breakoutless_logo.png"
 #define BREAKOUTLESS_GAME_OVER_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/game_over.png"
 #define BREAKOUTLESS_FONT_PATH           "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/fonts/font.ttf"
+
+
+#define BREAKOUTLESS_INTRO_MUSIC         "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/sounds/Gigakoops - Intro.mp3"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
@@ -58,6 +62,7 @@ typedef struct
     SDL_Texture *texture_label;
     TTF_Font *font;
     TTF_Font *points_font;
+    Mix_Music *music_intro;
     int points;
 } breakoutless_t;
 
@@ -224,6 +229,19 @@ static bool breakoutless_init(void *object)
     if (breakoutless->font == NULL)
     {
         fprintf(stderr, "Error to open font.\n");
+        return false;
+    }
+
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+    {
+        printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+        return false;
+    }
+
+    breakoutless->music_intro = Mix_LoadMUS( BREAKOUTLESS_INTRO_MUSIC );
+    if( breakoutless->music_intro == NULL )
+    {
+        printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
 
@@ -444,6 +462,12 @@ static bool breakoutless_draw(void *object)
         SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_label, NULL, &font_rect);
         SDL_FreeSurface(font);
 
+        if (Mix_PlayingMusic() == 0)
+        {
+            //Play the music
+            Mix_PlayMusic(breakoutless->music_intro, -1);
+        }
+
         // breakoutless->has_logo_draw = true;
     }
     // else if (breakoutless->game_over && breakoutless->has_game_over_draw == false)
@@ -491,6 +515,8 @@ static bool breakoutless_destroy(void *object)
     TTF_CloseFont(breakoutless->font);
 
     TTF_CloseFont(breakoutless->points_font);
+
+    Mix_FreeMusic(breakoutless->music_intro);
 
     SDL_DestroyTexture(breakoutless->texture_logo);
     SDL_DestroyTexture(breakoutless->texture_game_over);
