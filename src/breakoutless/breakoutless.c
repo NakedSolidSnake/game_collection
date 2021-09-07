@@ -7,11 +7,14 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-#define BREAKOUTLESS_LOGO_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/breakoutless_logo.png"
-#define BREAKOUTLESS_FONT_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/fonts/font.ttf"
+#define BREAKOUTLESS_LOGO_PATH           "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/breakoutless_logo.png"
+#define BREAKOUTLESS_GAME_OVER_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/game_over.png"
+#define BREAKOUTLESS_FONT_PATH           "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/src/breakoutless/assets/fonts/font.ttf"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
+
+#define BREAKOUTLESS_BALL_SPEED 300
 
 typedef struct 
 {
@@ -45,10 +48,13 @@ typedef struct
     bool running;
     bool start;
     bool game_over;
+    bool has_game_over_draw;
+    bool has_logo_draw;
     int last_frame_time;
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture_logo;
+    SDL_Texture *texture_game_over;
     SDL_Texture *texture_label;
     TTF_Font *font;
     TTF_Font *points_font;
@@ -87,12 +93,12 @@ int main()
             .coord = 
             {
                 .x = 20,
-                .y = 20
+                .y = 0
             },
             .speed = 
             {
-                .vx = 300,
-                .vy = 300
+                .vx = BREAKOUTLESS_BALL_SPEED,
+                .vy = BREAKOUTLESS_BALL_SPEED
             }
         },
         .paddle = 
@@ -120,7 +126,9 @@ int main()
         .last_frame_time = 0,
         .window = NULL,
         .renderer = NULL,
-        .points = 0
+        .points = 0,
+        .has_game_over_draw = false,
+        .has_logo_draw = false
     };
 
     if( game_loop(&test_game, &breakoutless) == true)
@@ -133,7 +141,8 @@ static bool breakoutless_init(void *object)
 {
     int image_type = IMG_INIT_PNG;
     int image_ret;
-    SDL_Surface *surface = NULL;
+    SDL_Surface *surface_logo = NULL;
+    SDL_Surface *surface_game_over = NULL;
     breakoutless_t * breakoutless = (breakoutless_t *)object;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -170,15 +179,29 @@ static bool breakoutless_init(void *object)
     }
         
 
-    surface = IMG_Load(BREAKOUTLESS_LOGO_PATH);
-    if (surface == NULL)
+    surface_logo = IMG_Load(BREAKOUTLESS_LOGO_PATH);
+    if (surface_logo == NULL)
     {
         fprintf(stderr, "Error to create image surface.\n");
         return false;
     }
 
-    breakoutless->texture_logo = SDL_CreateTextureFromSurface(breakoutless->renderer, surface);
+    breakoutless->texture_logo = SDL_CreateTextureFromSurface(breakoutless->renderer, surface_logo);
     if (breakoutless->texture_logo == NULL)
+    {
+        fprintf(stderr, "Error to create texture from surface.\n");
+        return false;
+    }
+
+    surface_game_over = IMG_Load(BREAKOUTLESS_GAME_OVER_PATH);
+    if (surface_game_over == NULL)
+    {
+        fprintf(stderr, "Error to create image surface.\n");
+        return false;
+    }
+
+    breakoutless->texture_game_over = SDL_CreateTextureFromSurface(breakoutless->renderer, surface_game_over);
+    if (breakoutless->texture_game_over == NULL)
     {
         fprintf(stderr, "Error to create texture from surface.\n");
         return false;
@@ -204,7 +227,8 @@ static bool breakoutless_init(void *object)
         return false;
     }
 
-    SDL_FreeSurface(surface);
+    SDL_FreeSurface(surface_logo);
+    SDL_FreeSurface(surface_game_over);
 
     return true;
 }
@@ -227,8 +251,15 @@ static bool breakoutless_input(void *object)
             breakoutless->paddle.speed.vx = -400;
         if (event.key.keysym.sym == SDLK_RIGHT)
             breakoutless->paddle.speed.vx = +400;        
-        if (event.key.keysym.sym == SDLK_RETURN)        
-            breakoutless->start = true;
+        if (event.key.keysym.sym == SDLK_RETURN)
+        {
+            if(breakoutless->start == false)
+            {
+                breakoutless->game_over = false;  
+                breakoutless->points = 0;          
+                breakoutless->start = true;
+            }            
+        }
 
         break;
 
@@ -246,6 +277,7 @@ static bool breakoutless_input(void *object)
 static bool breakoutless_update(void *object)
 {
     breakoutless_t * breakoutless = (breakoutless_t *)object;
+
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - breakoutless->last_frame_time);
 
     // Only delay if we are too fast too update this frame
@@ -258,40 +290,75 @@ static bool breakoutless_update(void *object)
     // Store the milliseconds of the current frame
     breakoutless->last_frame_time = SDL_GetTicks();
 
-    // update ball and paddle position
-    breakoutless->ball.coord.x += breakoutless->ball.speed.vx * delta_time;
-    breakoutless->ball.coord.y += breakoutless->ball.speed.vy * delta_time;
-    breakoutless->paddle.coord.x += breakoutless->paddle.speed.vx * delta_time;
-    breakoutless->paddle.coord.y += breakoutless->paddle.speed.vy * delta_time;
-    breakoutless->points++;
+    if (breakoutless->start && breakoutless->game_over == false)
+    {
+        printf("update.\n");    
+
+        switch (breakoutless->points)
+        {
+        case 2000:
+            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
+            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            break;
+
+        case 5000:
+            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
+            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            break;
+
+        case 7000:
+            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
+            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            break;
+        
+        case 10000:
+            breakoutless->ball.speed.vx = breakoutless->ball.speed.vx * 1.2;
+            breakoutless->ball.speed.vy = breakoutless->ball.speed.vy * 1.2;
+            break;       
+        }
+
+        // update ball and paddle position
+        breakoutless->ball.coord.x += breakoutless->ball.speed.vx * delta_time;
+        breakoutless->ball.coord.y += breakoutless->ball.speed.vy * delta_time;
+        breakoutless->paddle.coord.x += breakoutless->paddle.speed.vx * delta_time;
+        breakoutless->paddle.coord.y += breakoutless->paddle.speed.vy * delta_time;
+        breakoutless->points++;
+    }
+
     return true;
 }
 
 static bool breakoutless_collision(void *object)
 {
     breakoutless_t * breakoutless = (breakoutless_t *)object;
-    if (breakoutless->ball.coord.x <= 0 || breakoutless->ball.coord.x + breakoutless->ball.dimension.width >= WINDOW_WIDTH)
-        breakoutless->ball.speed.vx = -breakoutless->ball.speed.vx;
-    if (breakoutless->ball.coord.y < 0)
-        breakoutless->ball.speed.vy = -breakoutless->ball.speed.vy;
-
-    // Check for ball collision with the paddle
-    if (breakoutless->ball.coord.y + breakoutless->ball.dimension.height >= breakoutless->paddle.coord.y &&
-        breakoutless->ball.coord.x + breakoutless->ball.dimension.width >= breakoutless->paddle.coord.x &&
-        breakoutless->ball.coord.x <= breakoutless->paddle.coord.x + breakoutless->paddle.dimension.width)
-        breakoutless->ball.speed.vy = -breakoutless->ball.speed.vy;
-
-    // Prevent paddle from moving outside the boundaries of the window
-    if (breakoutless->paddle.coord.x <= 0)
-        breakoutless->paddle.coord.x = 0;
-    if (breakoutless->paddle.coord.x >= WINDOW_WIDTH - breakoutless->paddle.dimension.width)
-        breakoutless->paddle.coord.x = WINDOW_WIDTH - breakoutless->paddle.dimension.width;
-
-    // Check for game over
-    if (breakoutless->ball.coord.y + breakoutless->ball.dimension.height > WINDOW_HEIGHT)
+    if(breakoutless->start && breakoutless->game_over == false)
     {
-        breakoutless->ball.coord.x = WINDOW_WIDTH / 2;
-        breakoutless->ball.coord.y = 0;
+        printf("Collision.\n");
+        if (breakoutless->ball.coord.x <= 0 || breakoutless->ball.coord.x + breakoutless->ball.dimension.width >= WINDOW_WIDTH)
+            breakoutless->ball.speed.vx = -breakoutless->ball.speed.vx;
+        if (breakoutless->ball.coord.y < 0)
+            breakoutless->ball.speed.vy = -breakoutless->ball.speed.vy;
+
+        // Check for ball collision with the paddle
+        if (breakoutless->ball.coord.y + breakoutless->ball.dimension.height >= breakoutless->paddle.coord.y &&
+            breakoutless->ball.coord.x + breakoutless->ball.dimension.width >= breakoutless->paddle.coord.x &&
+            breakoutless->ball.coord.x <= breakoutless->paddle.coord.x + breakoutless->paddle.dimension.width)
+            breakoutless->ball.speed.vy = -breakoutless->ball.speed.vy;
+
+        // Prevent paddle from moving outside the boundaries of the window
+        if (breakoutless->paddle.coord.x <= 0)
+            breakoutless->paddle.coord.x = 0;
+        if (breakoutless->paddle.coord.x >= WINDOW_WIDTH - breakoutless->paddle.dimension.width)
+            breakoutless->paddle.coord.x = WINDOW_WIDTH - breakoutless->paddle.dimension.width;
+
+        // Check for game over
+        if (breakoutless->ball.coord.y + breakoutless->ball.dimension.height > WINDOW_HEIGHT)
+        {
+            breakoutless->game_over = true;
+            breakoutless->start = false;
+            breakoutless->ball.coord.x = breakoutless->ball.coord.y = 0;
+            breakoutless->ball.speed.vx = breakoutless->ball.speed.vy = BREAKOUTLESS_BALL_SPEED;
+        }
     }
     return true;
 }
@@ -299,12 +366,13 @@ static bool breakoutless_collision(void *object)
 static bool breakoutless_draw(void *object)
 {
     breakoutless_t * breakoutless = (breakoutless_t *)object;
-
-    SDL_SetRenderDrawColor(breakoutless->renderer, 0, 0, 0, 255);
+    
+    SDL_SetRenderDrawColor(breakoutless->renderer, 100, 100, 100, 255);
     SDL_RenderClear(breakoutless->renderer);
 
-    if (breakoutless->start)
+    if (breakoutless->start && breakoutless->game_over == false)
     {
+        printf("Draw Game.\n");
         // Draw a rectangle for the ball object
         SDL_Rect ball_rect =
         {
@@ -331,7 +399,7 @@ static bool breakoutless_draw(void *object)
         //draw points
         char text[120] = "";
         // int points = 200;
-        snprintf(text, 120, "Points: %d", breakoutless->points++);
+        snprintf(text, 120, "Points: %10d", breakoutless->points++);
         SDL_Color white = {255, 255, 255, 255};        
         SDL_Surface *font = TTF_RenderText_Blended(breakoutless->points_font, text, white);
         SDL_Rect font_rect = {WINDOW_WIDTH /2 -(font->w / 2), WINDOW_HEIGHT - 18, font->w, font->h};
@@ -341,12 +409,13 @@ static bool breakoutless_draw(void *object)
         SDL_FreeSurface(font);
 
     }
-    else
+   
+    //draw logo
+    // else if(breakoutless->game_over == false && breakoutless->start == false && !breakoutless->has_logo_draw)
+    else if(breakoutless->game_over == false && breakoutless->start == false)
     {
-        //draw logo
-        if(!breakoutless->game_over)
-        {
-            SDL_Rect src_rect;
+        printf("Draw Logo.\n");
+        SDL_Rect src_rect;
         SDL_Rect dest_rect;
         SDL_QueryTexture(breakoutless->texture_logo, NULL, NULL, &src_rect.w, &src_rect.h);
 
@@ -359,26 +428,47 @@ static bool breakoutless_draw(void *object)
 
         SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_logo, &src_rect, &dest_rect);
 
-        // draw Press start
-        // char text[120] = "";
-        // int points = 200;
-        // snprintf(text, 120, "Points: %d", points);
-        SDL_Color white = {255, 255, 255, 255};        
+        SDL_Color white = {255, 255, 255, 255};
         SDL_Surface *font = TTF_RenderText_Blended(breakoutless->font, "Press Start", white);
-        SDL_Rect font_rect = {WINDOW_WIDTH /2 -(font->w / 2), dest_rect.y + 200, font->w, font->h};
+        SDL_Rect font_rect = {WINDOW_WIDTH / 2 - (font->w / 2), dest_rect.y + 200, font->w, font->h};
         breakoutless->texture_label = SDL_CreateTextureFromSurface(breakoutless->renderer, font);
 
         SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_label, NULL, &font_rect);
-        SDL_FreeSurface(font); 
-        }
-        else 
-        {
-            //game over
-        }
+        SDL_FreeSurface(font);
 
-               
+        // breakoutless->has_logo_draw = true;
     }
+    // else if (breakoutless->game_over && breakoutless->has_game_over_draw == false)
+    else if (breakoutless->game_over)
+    {
+        //game over
+        printf("Draw Game Over.\n");
+        SDL_Rect src_rect;
+        SDL_Rect dest_rect;
+        SDL_QueryTexture(breakoutless->texture_game_over, NULL, NULL, &src_rect.w, &src_rect.h);
 
+        src_rect.x = 0;
+        src_rect.y = 0;
+        dest_rect.x = WINDOW_WIDTH / 2 - (src_rect.w / 2);
+        dest_rect.y = WINDOW_HEIGHT / 2 - (src_rect.h / 2);
+        dest_rect.w = src_rect.w;
+        dest_rect.h = src_rect.h;
+
+        SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_game_over, &src_rect, &dest_rect);
+
+        char text[120] = "";
+        // int points = 200;
+        snprintf(text, 120, "Max Points: %d", breakoutless->points);
+        SDL_Color white = {255, 255, 255, 255};
+        SDL_Surface *font = TTF_RenderText_Blended(breakoutless->font, text, white);
+        SDL_Rect font_rect = {WINDOW_WIDTH / 2 - (font->w / 2), dest_rect.h + 150, font->w, font->h};
+        breakoutless->texture_label = SDL_CreateTextureFromSurface(breakoutless->renderer, font);
+
+        SDL_RenderCopy(breakoutless->renderer, breakoutless->texture_label, NULL, &font_rect);
+        SDL_FreeSurface(font);
+
+        breakoutless->has_game_over_draw = true;
+    }
     SDL_RenderPresent(breakoutless->renderer);
 
     return true;
@@ -391,6 +481,11 @@ static bool breakoutless_destroy(void *object)
     if(breakoutless->texture_label != NULL)
         SDL_DestroyTexture(breakoutless->texture_label);
     TTF_CloseFont(breakoutless->font);
+
+    TTF_CloseFont(breakoutless->points_font);
+
+    SDL_DestroyTexture(breakoutless->texture_logo);
+    SDL_DestroyTexture(breakoutless->texture_game_over);
 
     SDL_DestroyRenderer(breakoutless->renderer);
     SDL_DestroyWindow(breakoutless->window);

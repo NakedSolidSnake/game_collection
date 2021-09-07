@@ -20,12 +20,12 @@ bool game_loop(game_base_t *game, void *object)
             if(game->input(object) == false)
                 break;
 
-            if(game->collision(object) == false)
-                break;
-                
             if(game->update(object) == false)
                 break;
 
+            if(game->collision(object) == false)
+                break;
+            
             if(game->draw(object) == false)
                 break;
         }
