@@ -8,7 +8,6 @@ bool breakoutless_collision(void *object)
         breakoutless_object_t *ball = &breakoutless->ball;   
         breakoutless_object_t *paddle = &breakoutless->paddle;
 
-        printf("Collision.\n");
         if (ball->coord.x <= 0 || ball->coord.x + ball->dimension.width >= WINDOW_WIDTH)
         {
             ball->speed.vx = -ball->speed.vx;
@@ -46,5 +45,6 @@ bool breakoutless_collision(void *object)
             ball->speed.vx = ball->speed.vy = BREAKOUTLESS_BALL_SPEED;
         }
     }
+    
     return true;
 }
