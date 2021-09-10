@@ -18,6 +18,10 @@
 
 
 #define BREAKOUTLESS_INTRO_MUSIC         "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/Gigakoops - Intro.mp3"
+#define BREAKOUTLESS_GAME_OVER_MUSIC     "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/Plusplus - Game Over.mp3"
+#define BREAKOUTLESS_WALL_SOUND          "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/hit_the_wall.wav"
+#define BREAKOUTLESS_PADDLE_SOUND        "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/hit_the_paddle.wav"
+#define BREAKOUTLESS_GROUND_SOUND        "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/hit_the_ground.wav"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
@@ -69,8 +73,11 @@ typedef struct
     TTF_Font *points_font;
     TTF_Font *speedup_font;
     bool speedup;
-    Mix_Music *music_intro;
+    Mix_Music *music_intro;    
     int points;
+    Mix_Chunk *sound_wall;
+    Mix_Chunk *sound_paddle;
+    Mix_Chunk *sound_ground;
 } breakoutless_t;
 
 /**

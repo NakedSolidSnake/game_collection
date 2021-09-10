@@ -14,6 +14,10 @@ static bool breakoutless_load_points_font(void *object);
 static bool breakoutless_load_speedup_font(void *object);
 static bool breakoutless_audio_init(void *object);
 static bool breakoutless_load_audio_intro(void *object);
+static bool breakoutless_load_sound_wall(void *object);
+static bool breakoutless_load_sound_paddle(void *object);
+static bool breakoutless_load_sound_ground(void *object);
+
 
 bool breakoutless_init(void *object)
 {    
@@ -32,7 +36,10 @@ bool breakoutless_init(void *object)
         breakoutless_load_points_font,
         breakoutless_load_speedup_font,
         breakoutless_audio_init,
-        breakoutless_load_audio_intro
+        breakoutless_load_audio_intro,
+        breakoutless_load_sound_wall,
+        breakoutless_load_sound_paddle,
+        breakoutless_load_sound_ground
     };
 
     int callback_amount = sizeof(breakoutless_callbacks) / sizeof(breakoutless_callbacks[0]);
@@ -272,3 +279,47 @@ static bool breakoutless_load_audio_intro(void *object)
     return status;
 }
 
+static bool breakoutless_load_sound_wall(void *object)
+{
+    bool status = true;
+    breakoutless_t * breakoutless = (breakoutless_t *)object;
+
+    breakoutless->sound_wall = Mix_LoadWAV( BREAKOUTLESS_WALL_SOUND );
+    if( breakoutless->sound_wall == NULL )
+    {
+        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        status = false;
+    }
+
+    return status;
+}
+
+static bool breakoutless_load_sound_paddle(void *object)
+{
+    bool status = true;
+    breakoutless_t * breakoutless = (breakoutless_t *)object;
+
+    breakoutless->sound_paddle = Mix_LoadWAV( BREAKOUTLESS_PADDLE_SOUND );
+    if( breakoutless->sound_paddle == NULL )
+    {
+        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        status = false;
+    }
+
+    return status;
+}
+
+static bool breakoutless_load_sound_ground(void *object)
+{
+    bool status = true;
+    breakoutless_t * breakoutless = (breakoutless_t *)object;
+
+    breakoutless->sound_ground = Mix_LoadWAV( BREAKOUTLESS_GROUND_SOUND);
+    if( breakoutless->sound_ground == NULL )
+    {
+        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        status = false;
+    }
+
+    return status;
+}

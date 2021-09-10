@@ -17,6 +17,10 @@ bool breakoutless_destroy(void *object)
 
     Mix_FreeMusic(breakoutless->music_intro);
 
+    Mix_FreeChunk( breakoutless->sound_wall );
+    Mix_FreeChunk( breakoutless->sound_paddle );
+    Mix_FreeChunk( breakoutless->sound_ground );
+
     SDL_DestroyTexture(breakoutless->texture_speedup);
     SDL_DestroyTexture(breakoutless->texture_logo);
     SDL_DestroyTexture(breakoutless->texture_game_over);
