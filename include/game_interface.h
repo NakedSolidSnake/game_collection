@@ -5,6 +5,8 @@
 
 typedef struct 
 {
+    void *game_object;
+
     bool (*init)(void *object);
     bool (*input)(void *object);
     bool (*update)(void *object);
@@ -13,7 +15,6 @@ typedef struct
     bool (*destroy)(void *object); 
 } game_base_t;
 
-
-bool game_loop(game_base_t *game, void *object);
+typedef game_base_t *(*game_plugin)(void);
 
 #endif /* GAME_INTERFACE_H */

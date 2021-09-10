@@ -32,57 +32,92 @@ endfunction()
 
 enable_testing()
 
-# game library
-add_library(game "")
-target_sources(game 
-  PUBLIC 
-  ${CMAKE_CURRENT_LIST_DIR}/src/game_loop.c
-  )
-target_include_directories(game 
-  PUBLIC 
-  ${CMAKE_CURRENT_LIST_DIR}/include
-  )
 
-# spaceship
-add_executable(spaceship "")
-target_link_libraries(spaceship PUBLIC game SDL2 SDL2_image)
-target_sources(spaceship 
-  PUBLIC 
-  ${CMAKE_CURRENT_LIST_DIR}/src/spaceship/spaceship.c
-  )
-target_include_directories(spaceship 
-  PUBLIC 
-  ${CMAKE_CURRENT_LIST_DIR}/include
-  )
-
-add_executable(breakoutless "")
-target_link_libraries(breakoutless PUBLIC game SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+# breakoutless library
+add_library(breakoutless SHARED "")
+target_link_libraries(breakoutless PUBLIC SDL2 SDL2_image SDL2_ttf SDL2_mixer)
 target_sources(breakoutless 
   PUBLIC 
-  ${CMAKE_CURRENT_LIST_DIR}/src/breakoutless/breakoutless.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless_collision.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless_destroy.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless_draw.c 
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless_init.c 
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless_input.c 
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless_update.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/src/breakoutless.c
   )
 target_include_directories(breakoutless 
   PUBLIC 
   ${CMAKE_CURRENT_LIST_DIR}/include
+  ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/include
   )
+
+
+# game menu
+add_executable(game_menu "")
+target_link_libraries(game_menu PUBLIC dl)
+target_sources(game_menu 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/src/main.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/game_loop.c 
+  ${CMAKE_CURRENT_LIST_DIR}/src/game_selection.c
+  )
+target_include_directories(game_menu
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/include
+  )
+
+# # game library
+# add_library(game "")
+# target_sources(game 
+#   PUBLIC 
+#   ${CMAKE_CURRENT_LIST_DIR}/src/game_loop.c
+#   )
+# target_include_directories(game 
+#   PUBLIC 
+#   ${CMAKE_CURRENT_LIST_DIR}/include
+#   )
+
+# # spaceship
+# add_executable(spaceship "")
+# target_link_libraries(spaceship PUBLIC game SDL2 SDL2_image)
+# target_sources(spaceship 
+#   PUBLIC 
+#   ${CMAKE_CURRENT_LIST_DIR}/src/spaceship/spaceship.c
+#   )
+# target_include_directories(spaceship 
+#   PUBLIC 
+#   ${CMAKE_CURRENT_LIST_DIR}/include
+#   )
+
+# add_executable(breakoutless "")
+# target_link_libraries(breakoutless PUBLIC game SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+# target_sources(breakoutless 
+#   PUBLIC 
+#   ${CMAKE_CURRENT_LIST_DIR}/src/breakoutless/breakoutless.c
+#   )
+# target_include_directories(breakoutless 
+#   PUBLIC 
+#   ${CMAKE_CURRENT_LIST_DIR}/include
+#   )
 
 #------------------------------------------------------------------------------------------------------
 # Tests
 #------------------------------------------------------------------------------------------------------
-add_test_unit(interface test_interface tests/test_interface.c)
-target_link_libraries(test_interface PUBLIC game)
+# add_test_unit(interface test_interface tests/test_interface.c)
+# target_link_libraries(test_interface PUBLIC game)
 
-add_test_unit(test_sdl test_sdl2 tests/test_sdl2.c)
-target_link_libraries(test_sdl2 PUBLIC game SDL2)
+# add_test_unit(test_sdl test_sdl2 tests/test_sdl2.c)
+# target_link_libraries(test_sdl2 PUBLIC game SDL2)
 
-add_test_unit(test_image test_sdl2_image tests/test_sdl2_image.c)
-target_link_libraries(test_sdl2_image PUBLIC game SDL2 SDL2_image)
+# add_test_unit(test_image test_sdl2_image tests/test_sdl2_image.c)
+# target_link_libraries(test_sdl2_image PUBLIC game SDL2 SDL2_image)
 
-add_test_unit(test_animation test_sdl2_animation tests/test_sdl2_animation.c)
-target_link_libraries(test_sdl2_animation PUBLIC game SDL2 SDL2_image)
+# add_test_unit(test_animation test_sdl2_animation tests/test_sdl2_animation.c)
+# target_link_libraries(test_sdl2_animation PUBLIC game SDL2 SDL2_image)
 
-add_test_unit(test_events test_sdl2_events tests/test_sdl2_events.c)
-target_link_libraries(test_sdl2_events PUBLIC game SDL2 SDL2_image)
+# add_test_unit(test_events test_sdl2_events tests/test_sdl2_events.c)
+# target_link_libraries(test_sdl2_events PUBLIC game SDL2 SDL2_image)
 
 
 #------------------------------------------------------------------------------------------------------
