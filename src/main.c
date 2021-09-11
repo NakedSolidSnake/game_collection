@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         //print menu
         printf("spaceship\n");
         printf("breakoutless\n");
-        printf("tic tac toe\n");
+        printf("tictactoe\n");
     }
 
     else 

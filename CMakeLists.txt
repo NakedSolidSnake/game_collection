@@ -52,6 +52,25 @@ target_include_directories(breakoutless
   ${CMAKE_CURRENT_LIST_DIR}/games/breakoutless/include
   )
 
+# tictactoe library
+add_library(tictactoe SHARED "")
+target_link_libraries(tictactoe PUBLIC SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+target_sources(tictactoe 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_collision.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_destroy.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_draw.c 
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_init.c 
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_input.c 
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_update.c
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe.c
+  )
+target_include_directories(tictactoe 
+  PUBLIC 
+  ${CMAKE_CURRENT_LIST_DIR}/include
+  ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/include
+  )
+
 
 # game menu
 add_executable(game_menu "")

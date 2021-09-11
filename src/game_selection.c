@@ -15,6 +15,7 @@ static game_list games[] =
 {
     {.game_name = "spaceship", .game_lib_name = "none"},
     {.game_name = "breakoutless", .game_lib_name = "../lib/libbreakoutless.so"},
+    {.game_name = "tictactoe", .game_lib_name = "../lib/libtictactoe.so"},
 };
 
 static int game_amount = sizeof(games) / sizeof(games[0]);
