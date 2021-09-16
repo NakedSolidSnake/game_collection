@@ -10,7 +10,6 @@ bool tictactoe_update(void *object)
     tictactoe_t *tictactoe = (tictactoe_t *)object;
     (void)tictactoe;
 
-    printf("%s\n", __FUNCTION__);
 
     if(tictactoe->clicked)
     {

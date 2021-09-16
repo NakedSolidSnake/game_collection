@@ -8,8 +8,6 @@ bool tictactoe_input(void *object)
     tictactoe_t *tictactoe = (tictactoe_t *)object;
     (void)tictactoe;
 
-    printf("%s\n", __FUNCTION__);
-
     SDL_Event e;
 
     while (SDL_PollEvent(&e))
@@ -22,16 +20,23 @@ bool tictactoe_input(void *object)
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-            // click_on_cell(&game,
-            //               e.button.y / CELL_HEIGHT,
-            //               e.button.x / CELL_WIDTH);
-            tictactoe->row = e.button.y / CELL_HEIGHT;
-            tictactoe->column = e.button.x / CELL_WIDTH;
-            tictactoe->clicked = true;
+            if(tictactoe->state != running && tictactoe->state != quit)
+            {
+                tictactoe->state = restart;
+            }
+            else 
+            {
+                tictactoe->row = e.button.y / CELL_HEIGHT;
+                tictactoe->column = e.button.x / CELL_WIDTH;
+                tictactoe->clicked = true;
+            }
             break; 
 
         default:{}    
         }
+
+        if(tictactoe->state != running && tictactoe->state != quit)
+            continue;
     }
 
     return status;

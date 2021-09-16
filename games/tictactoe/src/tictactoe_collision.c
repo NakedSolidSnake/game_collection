@@ -12,12 +12,15 @@ bool tictactoe_collision(void *object)
     tictactoe_t *tictactoe = (tictactoe_t *)object;
     (void)tictactoe;
 
-    printf("%s\n", __FUNCTION__);
     if ((tictactoe->clicked && tictactoe->state == running))
     {
         /* code */
         tictactoe_collision_game_over_condition(object);
         tictactoe->clicked = false;
+    }
+    else if(tictactoe->state == restart)
+    {
+        tictactoe_collision_reset_game(object);
     }
     
 

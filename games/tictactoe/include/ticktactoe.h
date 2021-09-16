@@ -32,6 +32,7 @@ typedef enum
     player_x_won,
     player_o_won,
     tie,
+    restart,
     quit
 } tictactoe_states_t;
 
@@ -45,6 +46,7 @@ typedef struct
     Sint32 row;
     Sint32 column;
     bool clicked;
+    int last_frame_time;
 } tictactoe_t;
 
 /**

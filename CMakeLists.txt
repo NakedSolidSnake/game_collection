@@ -20,6 +20,15 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include(GNUInstallDirs)
 
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
+find_package(PkgConfig)
+pkg_check_modules(SDL2_GFX SDL2_gfx)
+include_directories(${SDL2_GFX_INCLUDE_DIRS})
+
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -fdump-rtl-expand")
 
 function(add_test_unit BIN_NAME BIN SOURCE)
   add_executable(${BIN} ${SOURCE})
@@ -54,7 +63,7 @@ target_include_directories(breakoutless
 
 # tictactoe library
 add_library(tictactoe SHARED "")
-target_link_libraries(tictactoe PUBLIC SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+target_link_libraries(tictactoe PUBLIC ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES})
 target_sources(tictactoe 
   PUBLIC 
   ${CMAKE_CURRENT_LIST_DIR}/games/tictactoe/src/tictactoe_collision.c

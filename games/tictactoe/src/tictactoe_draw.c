@@ -7,7 +7,7 @@ static void tictactoe_draw_grid(void *object, const SDL_Color *color);
 static void tictactoe_draw_x(void *object, int row, int column, const SDL_Color *color);
 static void tictactoe_draw_o(void *object, int row, int column, const SDL_Color *color);
 static void tictactoe_draw_board(void *object, const SDL_Color *player_x_color, const SDL_Color *player_o_color);
-static void tictactoe_draw_running_state(void *object);
+static void tictactoe_draw_running_state(void *object, const SDL_Color *color);
 static void tictactoe_draw_game_over_state(void *object, const SDL_Color *color);
 
 const SDL_Color GRID_COLOR = { .r = 255, .g = 255, .b = 255 };
@@ -19,15 +19,11 @@ bool tictactoe_draw(void *object)
 {
     bool status = true;
     tictactoe_t *tictactoe = (tictactoe_t *)object;
-    (void)tictactoe;
-
-    printf("%s\n", __FUNCTION__);
 
     SDL_SetRenderDrawColor(tictactoe->renderer, 0, 0, 0, 255);
     SDL_RenderClear(tictactoe->renderer);
     tictactoe_draw_state(tictactoe);
     SDL_RenderPresent(tictactoe->renderer);
-
     return status;
 }
 
@@ -37,7 +33,7 @@ static void tictactoe_draw_state(void *object)
 
     switch (tictactoe->state) {
     case running:
-        tictactoe_draw_running_state(object);
+        tictactoe_draw_running_state(object, &GRID_COLOR);
         break;
 
     case player_x_won:
@@ -56,6 +52,8 @@ static void tictactoe_draw_state(void *object)
         break;
     case quit:
         break;
+    
+    default: {}
 
     }
 }
@@ -149,19 +147,20 @@ static void tictactoe_draw_board(void *object, const SDL_Color *player_x_color, 
                     tictactoe_draw_o(tictactoe, i, j, player_o_color);
                     break;
 
+                default: {}
+
             }
         }
     }
 }
 
-static void tictactoe_draw_running_state(void *object)
+static void tictactoe_draw_running_state(void *object, const SDL_Color *color)
 {
-    tictactoe_t *tictactoe = (tictactoe_t *)object;
+    tictactoe_draw_grid(object, color);
 
-    tictactoe_draw_grid(tictactoe->renderer, &GRID_COLOR);
-    tictactoe_draw_board(tictactoe->renderer,
-                 &PLAYER_X_COLOR,
-                 &PLAYER_O_COLOR);
+    tictactoe_draw_board(object,
+                         &PLAYER_X_COLOR,
+                         &PLAYER_O_COLOR);
 }
 
 static void tictactoe_draw_game_over_state(void *object, const SDL_Color *color)
