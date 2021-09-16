@@ -9,6 +9,23 @@
 game_base_t *game_builder(void)
 {   
     tictactoe_t *tictactoe = (tictactoe_t *)malloc(sizeof(tictactoe_t));
+
+    if(tictactoe)
+    {
+        tictactoe_t tictactoe_temp = 
+        {
+            .board = 
+            {
+                empty, empty, empty,
+                empty, empty, empty,
+                empty, empty, empty
+            }, 
+            .player = player_x,
+            .state = running
+        };
+
+        memcpy(tictactoe, &tictactoe_temp, sizeof(tictactoe_t));
+    }
     
     game_base_t *game = (game_base_t *)malloc(sizeof(game_base_t));
     if(game)

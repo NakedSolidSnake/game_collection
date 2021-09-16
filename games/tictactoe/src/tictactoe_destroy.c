@@ -9,5 +9,9 @@ bool tictactoe_destroy(void *object)
 
     printf("%s\n", __FUNCTION__);
 
+    SDL_DestroyRenderer(tictactoe->renderer);
+    SDL_DestroyWindow(tictactoe->window);
+    SDL_Quit();
+
     return status;
 }

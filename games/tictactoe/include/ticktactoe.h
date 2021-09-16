@@ -13,27 +13,38 @@
 #define WINDOW_HEIGHT 600
 
 
-typedef struct 
-{
-    float x;
-    float y;
-} point_t;
+#define N 3
+#define SCREEN_WIDTH 640.0
+#define SCREEN_HEIGHT 480.0
+#define CELL_WIDTH (SCREEN_WIDTH / N)
+#define CELL_HEIGHT (SCREEN_HEIGHT / N)
 
-typedef struct 
+typedef enum 
 {
-    float width;
-    float height;
-} dimension_t;
+    empty,
+    player_x,
+    player_o
+} tictactoe_player_t;
 
-typedef struct
+typedef enum 
 {
-    float vx;
-    float vy;
-} speed_t;
+    running = 0,
+    player_x_won,
+    player_o_won,
+    tie,
+    quit
+} tictactoe_states_t;
 
 typedef struct
 {    
-    int dummy;
+    int board[N * N];
+    tictactoe_player_t player;
+    tictactoe_states_t state;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    Sint32 row;
+    Sint32 column;
+    bool clicked;
 } tictactoe_t;
 
 /**
