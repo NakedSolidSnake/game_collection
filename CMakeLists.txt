@@ -86,40 +86,6 @@ target_include_directories(game_menu
   ${CMAKE_CURRENT_LIST_DIR}/include
   )
 
-# # game library
-# add_library(game "")
-# target_sources(game 
-#   PUBLIC 
-#   ${CMAKE_CURRENT_LIST_DIR}/src/game_loop.c
-#   )
-# target_include_directories(game 
-#   PUBLIC 
-#   ${CMAKE_CURRENT_LIST_DIR}/include
-#   )
-
-# # spaceship
-# add_executable(spaceship "")
-# target_link_libraries(spaceship PUBLIC game SDL2 SDL2_image)
-# target_sources(spaceship 
-#   PUBLIC 
-#   ${CMAKE_CURRENT_LIST_DIR}/src/spaceship/spaceship.c
-#   )
-# target_include_directories(spaceship 
-#   PUBLIC 
-#   ${CMAKE_CURRENT_LIST_DIR}/include
-#   )
-
-# add_executable(breakoutless "")
-# target_link_libraries(breakoutless PUBLIC game SDL2 SDL2_image SDL2_ttf SDL2_mixer)
-# target_sources(breakoutless 
-#   PUBLIC 
-#   ${CMAKE_CURRENT_LIST_DIR}/src/breakoutless/breakoutless.c
-#   )
-# target_include_directories(breakoutless 
-#   PUBLIC 
-#   ${CMAKE_CURRENT_LIST_DIR}/include
-#   )
-
 #------------------------------------------------------------------------------------------------------
 # Tests
 #------------------------------------------------------------------------------------------------------
@@ -143,15 +109,7 @@ target_include_directories(game_menu
 # Install
 #------------------------------------------------------------------------------------------------------
 # install(DIRECTORY include/collection   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/file         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/log          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/queue        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/semaphore    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/server       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/sharedmemory DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/signal       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/util         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/database     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-# install(DIRECTORY include/json     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
 # install(TARGETS  util ipc comm database collection json LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+file(COPY games/breakoutless/assets DESTINATION bin/breakoutless)
+file(COPY games/spaceship/assets DESTINATION bin/spaceship)

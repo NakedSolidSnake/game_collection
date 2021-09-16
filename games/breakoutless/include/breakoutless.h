@@ -12,16 +12,16 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
-#define BREAKOUTLESS_LOGO_PATH           "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/breakoutless_logo.png"
-#define BREAKOUTLESS_GAME_OVER_PATH      "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/game_over.png"
-#define BREAKOUTLESS_FONT_PATH           "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/fonts/font.ttf"
+#define BREAKOUTLESS_LOGO_PATH           "breakoutless/assets/breakoutless_logo.png"
+#define BREAKOUTLESS_GAME_OVER_PATH      "breakoutless/assets/game_over.png"
+#define BREAKOUTLESS_FONT_PATH           "breakoutless/assets/fonts/font.ttf"
 
 
-#define BREAKOUTLESS_INTRO_MUSIC         "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/Gigakoops - Intro.mp3"
-#define BREAKOUTLESS_GAME_OVER_MUSIC     "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/Plusplus - Game Over.mp3"
-#define BREAKOUTLESS_WALL_SOUND          "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/hit_the_wall.wav"
-#define BREAKOUTLESS_PADDLE_SOUND        "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/hit_the_paddle.wav"
-#define BREAKOUTLESS_GROUND_SOUND        "/media/cssouza/SOLIDCRIS/repositories/Faz-Em-C/spaceship/games/breakoutless/assets/sounds/hit_the_ground.wav"
+#define BREAKOUTLESS_INTRO_MUSIC         "breakoutless/assets/sounds/Gigakoops - Intro.mp3"
+#define BREAKOUTLESS_GAME_OVER_MUSIC     "breakoutless/assets/sounds/Plusplus - Game Over.mp3"
+#define BREAKOUTLESS_WALL_SOUND          "breakoutless/assets/sounds/hit_the_wall.wav"
+#define BREAKOUTLESS_PADDLE_SOUND        "breakoutless/assets/sounds/hit_the_paddle.wav"
+#define BREAKOUTLESS_GROUND_SOUND        "breakoutless/assets/sounds/hit_the_ground.wav"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)

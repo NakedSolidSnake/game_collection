@@ -12,7 +12,7 @@ bool tictactoe_input(void *object)
 
     SDL_Event e;
 
-    if (SDL_PollEvent(&e))
+    while (SDL_PollEvent(&e))
     {
         switch (e.type)
         {
@@ -28,7 +28,9 @@ bool tictactoe_input(void *object)
             tictactoe->row = e.button.y / CELL_HEIGHT;
             tictactoe->column = e.button.x / CELL_WIDTH;
             tictactoe->clicked = true;
-            break;     
+            break; 
+
+        default:{}    
         }
     }
 
